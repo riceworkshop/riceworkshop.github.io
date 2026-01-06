@@ -2285,6 +2285,7 @@ input, select, textarea {
 		#hero h2 {
 			color: #fff;
 			font-size: 3em;
+			font-weight: bold;
 		}
 
 		#hero strong {
