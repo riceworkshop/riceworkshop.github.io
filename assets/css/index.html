@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Academic Review Builder</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 40px;
+    background-color: #f8f9fb;
+}
+
+h1 {
+    margin-bottom: 5px;
+}
+
+.category {
+    background: white;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+h2 {
+    margin-top: 0;
+}
+
+.statement {
+    margin-bottom: 8px;
+}
+
+textarea {
+    width: 100%;
+    height: 80px;
+    margin-top: 8px;
+}
+
+#output {
+    height: 300px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Structured Review Builder</h1>
+<p>Select statements and add detail. The structured review will generate below.</p>
+
+<div id="categories"></div>
+
+<button onclick="generateReview()">Generate Review</button>
+
+<h2>Generated Review</h2>
+<textarea id="output"></textarea>
+
+<script>
+
+const rubric = {
+    "Relevance": [
+        "The paper is clearly situated within the scope of the venue and engages directly with its core themes.",
+        "The work connects to ongoing conversations in the field, though this positioning could be made more explicit.",
+        "The relevance to the venue would benefit from clearer articulation of how the contribution advances current discourse.",
+        "The paper feels somewhat tangential to the primary audience of the venue and would require reframing."
+    ],
+    "Significance, Novelty & Originality": [
+        "The contribution is clearly articulated and represents a meaningful advance in the field.",
+        "The work provides a solid incremental contribution, though its novelty could be more sharply defined.",
+        "The motivating questions are compelling; however, the specific contribution should be more precisely articulated.",
+        "The paper applies established approaches in a new context, though the originality remains modest."
+    ],
+    "Soundness, Validity & Accuracy": [
+        "The methodology is appropriate and aligns well with the stated research questions.",
+        "The statistical analyses are conducted with rigour and are largely appropriate to the study design.",
+        "Some claims would benefit from more cautious framing to avoid overstating the findings.",
+        "Certain measures require stronger justification, particularly where instruments appear to be author-constructed.",
+        "A more nuanced discussion of limitations (e.g., ecological validity) would strengthen the paper."
+    ],
+    "Clarity": [
+        "The paper is generally well structured and easy to follow.",
+        "The research questions would benefit from more precise wording and tighter alignment with the results.",
+        "The distinction between different phases of the study (e.g., participant data and expert evaluation) could be made clearer.",
+        "Explicitly linking findings back to the research questions in the discussion would improve coherence."
+    ],
+    "Reproducibility": [
+        "The methods are described in sufficient detail to allow replication.",
+        "Additional procedural detail would improve transparency and reproducibility.",
+        "Further information about participant sampling and materials would strengthen reproducibility.",
+        "Providing justification for measurement choices would support methodological transparency."
+    ]
+};
+
+const container = document.getElementById("categories");
+
+for (let category in rubric) {
+    const div = document.createElement("div");
+    div.className = "category";
+
+    let html = `<h2>${category}</h2>`;
+
+    rubric[category].forEach((statement, index) => {
+        html += `
+            <div class="statement">
+                <input type="checkbox" id="${category}-${index}">
+                <label for="${category}-${index}">${statement}</label>
+            </div>
+        `;
+    });
+
+    html += `
+        <label><strong>Add specific comments:</strong></label>
+        <textarea id="${category}-extra"></textarea>
+    `;
+
+    div.innerHTML = html;
+    container.appendChild(div);
+}
+
+function generateReview() {
+    let reviewText = "";
+
+    for (let category in rubric) {
+        reviewText += category.toUpperCase() + ":\n\n";
+
+        rubric[category].forEach((statement, index) => {
+            const checkbox = document.getElementById(`${category}-${index}`);
+            if (checkbox.checked) {
+                reviewText += statement + " ";
+            }
+        });
+
+        const extra = document.getElementById(`${category}-extra`).value;
+        if (extra.trim() !== "") {
+            reviewText += "\n" + extra;
+        }
+
+        reviewText += "\n\n-----------------------------------\n\n";
+    }
+
+    document.getElementById("output").value = reviewText;
+}
+
+</script>
+
+</body>
+</html>
